@@ -24,7 +24,7 @@
 
 [Communication security](../../wiki#communication-security)
 
-[File uploads](../../wiki#file-uploads))
+[File uploads](../../wiki#file-uploads)
 
 [Mitigations](../../wiki#mitigations)
 
