@@ -20,7 +20,7 @@
 
 [Session Management](../../wiki#session-management)
 
-[Integration](../../wiki#integration
+[Integration](../../wiki#integration)
 
 [Communication security](../../wiki#communication-security)
 
