@@ -1,5 +1,7 @@
 # Security Guide for Developers
 
+[General Principles](../../wiki#general-principles)
+
 [Development Process](../../wiki#development-process)
 
 [Application Design](../../wiki#application-design)
