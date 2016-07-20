@@ -4,6 +4,8 @@
 
 [Application Design](../../wiki#application-design)
 
+[General protection apps must have](../../wiki#general-protection-apps-must-have)
+
 [Testing](../../wiki#testing)
 
 [Running Application](../../wiki#running-application)
@@ -25,8 +27,6 @@
 [Communication security](../../wiki#communication-security)
 
 [File uploads](../../wiki#file-uploads)
-
-[Mitigations](../../wiki#mitigations)
 
 [Resources](../../wiki#useful-resources-and-books)
 
