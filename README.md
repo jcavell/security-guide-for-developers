@@ -16,7 +16,7 @@
 
 [Cookies](../../wiki#cookies)
 
-[local storage, web sockets](../../wiki#html5)
+[LocalStorage, WebSockets](../../wiki#html5)
 
 [Error Handling and Logging](../../wiki#error-handling-and-logging)
 
