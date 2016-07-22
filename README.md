@@ -6,17 +6,15 @@
 
 [Application Design](../../wiki#application-design)
 
-[General protection apps must have](../../wiki#general-protection-apps-must-have)
+[General protection](../../wiki#general-protection)
+
+[Cookies](../../wiki#cookies)
 
 [Testing](../../wiki#testing)
 
 [Running Application](../../wiki#running-application)
 
 [Validation](../../wiki#validation)
-
-[Cookies](../../wiki#cookies)
-
-[LocalStorage, WebSockets](../../wiki#html5)
 
 [Error Handling and Logging](../../wiki#error-handling-and-logging)
 
