@@ -1,6 +1,6 @@
 # Security Guide for Developers
 
-[Home Office Principles](../../wiki/At-the-Home-Office)
+[Things you should know before you start](../../wiki/At-the-Home-Office)
 
 [Development Process](../../wiki#development-process)
 
