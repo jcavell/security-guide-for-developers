@@ -1,5 +1,7 @@
 # Security Guide for Developers
 
+[Important stuff](../../wiki#really-important-stuff)
+
 [Development Process](../../wiki#development-process)
 
 [Application Design](../../wiki#application-design)
