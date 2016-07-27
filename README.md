@@ -1,9 +1,5 @@
 # Security Guide for Developers
 
-[Things you should know before you start](../../wiki/At-the-Home-Office)
-
-[Development Process](../../wiki#development-process)
-
 [Application Design](../../wiki#application-design)
 
 [General protection](../../wiki#general-protection)
