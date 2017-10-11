@@ -257,6 +257,7 @@ OWASP provide some tools for this, which includes a command line tool as well as
 
 ## Useful resources and books
 
+- [National Cyber Security Centre Secure Development Practices Guide](https://github.com/ukncsc/secure-development-and-deployment/)
 - [OWASP Top 10 Project](https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project)
 - [Web Application Security - A Beginner's Guide](https://www.mhprofessional.com/product.php?isbn=0071776168)
 - [Identity and Data Security for Web Developers](http://shop.oreilly.com/product/0636920044376.do)
