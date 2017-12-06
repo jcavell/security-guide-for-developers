@@ -1,10 +1,5 @@
 # Security Guide for Developers
 - [Really Important stuff](#really-important-stuff)
-- [Automated security testing](#automated-security-testing)
-  - [Web application security testing](#web-application-security-testing)
-  - [NodeJS dependency security testing](#nodejs-security-testing)
-  - [Scala dependency security testing](#scala-security-testing)
-  - [Java dependency security testing](#java-security-testing)
 - [General best practices](#general-best-practices)
   - [Development Process](#development-process)
   - [Application Design](#application-design)
@@ -21,47 +16,16 @@
   - [Integration](#integration)
   - [File uploads](#file-uploads)
   - [Communication security](#communication-security)
+- [Automated security testing](#automated-security-testing)
+  - [NodeJS dependency security testing](#nodejs-security-testing)
+  - [Scala dependency security testing](#scala-security-testing)
+  - [Java dependency security testing](#java-security-testing)  
 - [Resources](#useful-resources-and-books)
 
 # Really important stuff!
 - don’t put live data on any local device unless it has been signed off for such usage
 - only access live / sensitive data under strict guidance (each service should have rules around its usage)
 - understand the policies around where you should store your source code. NEVER put information such as passwords, API Keys or IP addresses in code repositories, even private ones.
-
-# Automated security testing
-Whilst projects will have a penetration test and IT health check, these are periodic tasks. We also encourage teams to run automated security testing tools so they can pick up security vulnerabilities much more quickly.
-
-## Important Note!! Must be a periodic job!
-Note that we highly recommend that these security testing tools are run on a regular basis, not just when code is pushed. This is because new vulnerabilities may emerge without you having made any changes to your application, and it is important that these are picked up.
-
-## Web application security testing
-This section details tools that can be used to black box test your web application for common vulnerabilities.
-
-## NodeJS dependency security testing
-This section details how to check your NodeJS project's dependencies for vulnerabilities.
-
-### Snyk
-Snyk checks your NodeJS applications dependencies for vulnerabilities. We recommend 2 ways to use Snyk:
-
-1) Github integration
-Snyk can automatically raise PRs against your repository to fix vulnerabilities, more details available here:  
-https://snyk.io/docs/github/
-
-2) Manually
-Snyk has a CLI that you can use manually or as part of a CI pipeline. The easiest way to configure this is to:
-  - Locally run **snyk wizard**
-  - The wizard will offer to add code to your package json to run snyk vulnerability testing alongside your usual npm test jobs
-  - Accept this and any CI test jobs will fail if there are new vulnerabilities
-
-## Scala dependency security testing
-This section details how to check your Scala project's dependencies for vulnerabilities.
-
-### SBT Dependency Check
-SBT Dependency Check checks your dependencies against the OWASP database of vulnerable modules. It does work but is relatively immature, so not as easy to use as Snyk. [You can find SBT dependency check here](https://github.com/albuch/sbt-dependency-check)
-
-## Java dependency security testing
-This section details how to check your Java project's dependencies for vulnerabilities.
-OWASP provide some tools for this, which includes a command line tool as well as a maven plugin. This is essentially the same tool as SBT Dependency Check above, just more for Java. [You can find Dependency Check for Java here](https://www.owasp.org/index.php/OWASP_Dependency_Check)
 
 # General best practices
 
@@ -249,7 +213,29 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - whitelist allowable methods
 - interface specification should be auto-generated only after tests against the specification pass
 
+# Automated security testing
+Whilst projects will have a penetration test and IT health check, these are periodic tasks. We also encourage teams to run automated security testing tools so they can pick up security vulnerabilities much more quickly. We recommend that security testing tools are run on a regular basis, not just when code is pushed. This is because new vulnerabilities may emerge without you having made any changes to your application.
 
+## NodeJS dependency security testing - Snyk
+Snyk checks your NodeJS applications dependencies for vulnerabilities.
+
+We recommend 2 ways to use Snyk:
+
+1) Github integration
+Snyk can automatically raise PRs against your repository to fix vulnerabilities, more details available here:  
+https://snyk.io/docs/github/
+
+2) Manually
+Snyk has a CLI that you can use manually or as part of a CI pipeline. The easiest way to configure this is to:
+  - Locally run **snyk wizard**
+  - The wizard will offer to add code to your package json to run snyk vulnerability testing alongside your usual npm test jobs
+  - Accept this and any CI test jobs will fail if there are new vulnerabilities
+
+## Scala dependency security testing -  SBT Dependency Check
+SBT Dependency Check checks your dependencies against the OWASP database of vulnerable modules. It does work but is relatively immature, so not as easy to use as Snyk. [You can find SBT dependency check here](https://github.com/albuch/sbt-dependency-check)
+
+## Java dependency security testing
+OWASP provide some tools for this, which includes a command line tool as well as a maven plugin. This is essentially the same tool as SBT Dependency Check above, just more for Java. [You can find Dependency Check for Java here](https://www.owasp.org/index.php/OWASP_Dependency_Check)
 
 ## Tech specific libraries
 
