@@ -13,13 +13,10 @@
   - [Error Handling and Logging](#error-handling-and-logging)
   - [Authentication and Authorisation](#authentication--authorisation)
   - [Session Management](#session-management)
-  - [Integration](#integration)
-  - [File uploads](#file-uploads)
-  - [Communication security](#communication-security)
+  - [File uploads - Virus scanning](#file-uploads)
+  - [Web services - API keys, JWTs, CORS](#web-service-security)
+  - [Communication security - TLS](#communication-security)
 - [Automated security testing](#automated-security-testing)
-  - [NodeJS dependency security testing - Snyk](#nodejs-security-testing)
-  - [Scala dependency security testing -  SBT Dependency Check](#scala-security-testing)
-  - [Java dependency security testing](#java-security-testing)  
 - [Resources](#useful-resources-and-books)
 
 # Really important stuff!
