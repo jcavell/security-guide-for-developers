@@ -26,7 +26,7 @@
 # Really important stuff!
 - don’t put live data on any local device unless it has been signed off for such usage
 - only access live / sensitive data under strict guidance (each service should have rules around its usage)
-- understand the policies around where you should store your source code. Do not put information such as passwords, IP addresses etc. in code repositories
+- understand the policies around where you should store your source code. NEVER put information such as passwords, API Keys or IP addresses in code repositories, even private ones.
 
 # Automated security testing
 Whilst projects will have a penetration test and IT health check, these are periodic tasks. We also encourage teams to run automated security testing tools so they can pick up security vulnerabilities much more quickly.
@@ -72,7 +72,7 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - require [signed commits](https://help.github.com/articles/signing-commits-using-gpg/)
 - have a well defined, understood and enforced code review process
 - ensure you have fast, repeatable deploys with automated testing
-- monitor for security advisories and patches
+- monitor for security advisories and patches and update when necessary
 
 ## Application design
 
@@ -99,8 +99,8 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - protect against [clickjacking](https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet) by using the "X-Frame-Options: DENY" HTTP Header
 - Don’t use [JSONP](http://stackoverflow.com/questions/3839966/can-anyone-explain-what-jsonp-is-in-layman-terms) to send sensitive data. Since JSONP is valid JavaScript, it’s not protected by the same-origin policy
 - do not eval any non-verified String (e.g. don't eval a String expected to contain JSON - use JSON.parse instead)
-- do not store sensitive information or session ids in [LocalStorage](https://www.sitepoint.com/html5-local-storage-revisited/) (it is always accessible via javascript)
-- use the object sessionStorage instead of localStorage if persistence longer than the browser session is not required
+- do not store session ids in [LocalStorage](https://www.sitepoint.com/html5-local-storage-revisited/). Think carefully before putting any sensitive data in local storage, even when encrypted
+- prefer sessionStorage to localStorage if persistence longer than the browser session is not required
 - validate URLs passed to XMLHttpRequest.open (browsers allow these to be cross-domain)
 - only use [WebSockets](http://www.html5rocks.com/en/tutorials/websockets/basics/) over TLS (wss://) and be aware that communication can be spoofed / hijacked through XSS
 - use [different subdomains](https://www.gov.uk/service-manual/operations/operating-servicegovuk-subdomains.html) for public facing web pages, static assets and administration
@@ -117,19 +117,20 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - test in an environment configured like live (infrastructure, replication, TLS etc.) with similar data profiles (but not with live data) as early as possible
 - any testing against live data in non prod environments (even if scrubbed / anonymised) needs appropriate signoff
 - use Continuous Integration (CI) and ensure good automated unit, integration, acceptance, smoke, performance, security tests
-- underatke an IT Health Check (ITHC, [Penetration Test, Pen Test](https://en.wikipedia.org/wiki/Penetration_test)) for new services or significant changes
+- undertake an IT Health Check (ITHC, [Penetration Test, Pen Test](https://en.wikipedia.org/wiki/Penetration_test)) for new services or significant changes
 - consider use of a version of [chaos monkey](http://www.ibm.com/developerworks/library/a-devops4/) e.g. [Simian Army](https://github.com/Netflix/SimianArmy) to test random instance failures
 
 ## Running application
 
 - always use HTTPS (ensure you use [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) 1.2)
+- ensure SSL certificates cover the domain and sub-domains, are current and from a trusted Certificate Authority
 - web applications must use a properly configured Web Application Firewall [(WAF)](https://www.owasp.org/index.php/Web_Application_Firewall) e.g. [NAXSI](https://github.com/nbs-system/naxsi)
 - remove unnecessary functionality and code
 - if exceptions occur, fail securely
 - monitor metrics e.g. [Sysdig](http://www.sysdig.org/)
 - create audit for successful and unsuccessful login attempts, unsuccessful authorisation attempts, logouts etc.
 - disable unused [HTTP methods](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html)
-- restrict all applications and services to running with the minimum set of privileges
+- restrict all applications and services to running with the minimum set of privileges / permissions
 - isolate dev environments from the production network, and allow access to dev from authorised users only (dev environments can be a common attack vector)
 
 ## Validation
@@ -159,20 +160,21 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - understand the data that will be used, its retention and removal policy
 - understand who will be accessing the service / data, with what devices via what networks / 3rd party services
 - only store and use the minimum amount of data required to fulfil the user need
-- restrict users to only being able to view the data they need
-- do not provide interfaces that allow arbitrary querying of data
-- don’t allow bulk datasets to be downloaded or too much data made visible on a page
-- rate limit access to large datasets and record access attempts (also limit the number of transactions a user or device can perform in a given time period)
-- favour use of database schemas, even for noSQL databases by using e.g. [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB
+- allow users to view only the data they need
+- don't (provide interfaces that) allow arbitrary querying of data
+- don't allow download of bulk data-sets or too much data to be visible on a page
+- rate limit access to large data-sets and record access attempts (also limit the number of transactions a user or device can perform in a given time period)
+- enforce use of database schemas, even for noSQL databases by using e.g. [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB
 - avoid caching data within services unless necessary
 - protect caches / temp files containing sensitive data from unauthorised usage and purge them ASAP
 - use synchronous cryptography (shared secret) e.g. [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) to encrypt / decrypt your own data if its sensitive. Ensure the shared key is held securely and separately to the data
-- encode fields that have especially sentive values
-- disable autocomplete on forms for sensitive fields, including passwords
+- encode fields that have especially sensitive values
+- disable autocomplete on forms for sensitive fields
+- not transmit any sensitive information within the URL
 - disable client-side caching for pages containing sensitive data by using appropriate [HTTP cache headers](https://www.keycdn.com/blog/http-cache-headers/) i.e. "Cache-Control: no-store", "Expires: 0" and "Pragma: no-cache"
 - anonymise data (ensuring re-identification cannot take place) sent to reporting tools or being used as test data
 - consider encrypting partially completed forms under a key held by the user if you do not need to use this data
-- applications should connect to databases with different credentials for each ‘trust distinction’ e.g. user, read-only, admin, guest
+- applications should connect to databases with different credentials for each trust distinction e.g. user, read-only, admin, guest
 - do not store passwords, connection strings etc. in plain text
 
 ## Authentication / authorisation
@@ -183,7 +185,6 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - if authentication services go down they should not give users unauthorised access
 - authentication failure should give no information as to which part failed - all error responses should be generic and the same
 - separate authentication and authorisation from the resource that is being requested
-- ensure every page requires a role, even if it is "guest"
 - admin / account management functions should be particularly secure
 - any credential store should only use cryptographically strong one-way salted hashes that don’t allow brute-force attacks. (use bcrypt, scrypt or PBKDF2). Salt length should be at least 128 bits and can be stored in db (prevents [rainbow attacks](http://security.stackexchange.com/questions/379/what-are-rainbow-tables-and-how-are-they-used))
 - enforce the changing of temporary or default passwords when they are used
@@ -191,7 +192,7 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - prevent users from reusing a password
 - notify users when a password reset occurs
 - indicate the last attempted login to a user
-- disable remember me and do not allow the client to store credentials
+- think carefully about the implications of using "Remember Me"
 - re-authenticate users before performing any critical operation such as uploading files
 - more secure: use multi-factor authentication (MFA / 2FA) to obtain one-time passwords (OTP). Favour [Google Authenticator](https://en.wikipedia.org/wiki/Google_Authenticator), [Authy](https://www.authy.com/developers/) etc. over SMS (which has weak encryption standards that allow for man-in-the-middle attacks)
 - consider introducing captcha after a number of login failures
@@ -209,6 +210,7 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - logout should always be available
 - expire session ids after a defined period (to reduce impact of session hijacking)
 - session invalidation (due to e.g. timeout, logout, expiration or unauthorised reuse) should immediately delete the session id + session data on the server and client (include a Set-Cookie directive in the response with an expiration time in the past)
+- always create a new session when re-authenticating, to avoid [session fixation](https://www.owasp.org/index.php/Session_fixation) attacks
 - sensitive session data should be stored on the server
 - clear out expired server-side session data frequently
 - do not allow concurrent logins for the same user id
@@ -239,10 +241,11 @@ OWASP provide some tools for this, which includes a command line tool as well as
 - virus / malware scan, preferably in a disposable container
 - turn of exec privileges on file upload directories and ensure file is read-only
 
-## REST / API security
+## Web service security
 
-- use session-based authentication either using a session token via a POST or an API key as via a POST body argument or as a cookie
-- prefer 2-way TLS [client certs](https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet#Client-Side_Certificates) if your application is integrating via a web service
+- use session-based authentication either using a session token via a POST or an API key as via a POST body argument or as a cookie. Public / private API key management will need to be considered.
+- consider 2-way TLS [client certs](https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet#Client-Side_Certificates) if your application is integrating via a web service. However, implementation and trouble-shooting can be onerous and revoking and reissuing certificates a complexity
+- consider a hash-based messaging code (HMAC) over HTTP (using e.g. JWTs) to sign requests to indicate their authenticity; this does require a shared secret
 - whitelist allowable methods
 - interface specification should be auto-generated only after tests against the specification pass
 
