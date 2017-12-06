@@ -208,13 +208,17 @@
 - turn of exec privileges on file upload directories and ensure file is read-only
 
 ## Web service security
-
-- use session-based authentication either using a session token via a POST or an API key as via a POST body argument or as a cookie. Public / private API key management will need to be considered.
+- OWASP have a good [REST Security Cheatsheet](https://www.owasp.org/index.php/REST_Security_Cheat_Sheet)
+- favour JSON Web Tokens [(JWT)](https://jwt.io/) in the header as the format for security tokens and protect their integrity with a [MAC](https://en.wikipedia.org/wiki/Message_authentication_code)
+- use API Keys in the authorization header to throttle clients and reduce impact of denial of service attacks. Do not rely on them to protect sensitive resources because they are easy to compromise
 - consider 2-way TLS [client certs](https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet#Client-Side_Certificates) if your application is integrating via a web service. However, implementation and trouble-shooting can be onerous and revoking and reissuing certificates a complexity
-- consider a hash-based messaging code (HMAC) over HTTP (using e.g. JWTs) to sign requests to indicate their authenticity; this does require a shared secret
-- whitelist allowable methods
+- whitelist allowable methods and reject non-allowed with 405
 - be aware of authorisation needs in service-to-service communication, and avoid the confused deputy problem where a service calls another without providing the appropriate authorisation information. Using [external ids](https://aws.amazon.com/blogs/security/how-to-use-external-id-when-granting-access-to-your-aws-resources/) can help here. 
-- interface specification should be auto-generated only after tests against the specification pass
+- the server should always send the Content-Type header with the correct Content-Type, and include a charset
+- reject a request with 406 Not Acceptable response if the Content-Type is not supported
+- disable CORS headers unless cross-domain calls are needed. If they are needed, be as specific as possible
+- consider logging token validation errors to help detect attacks
+
 
 # Automated security testing
 Whilst projects will have a penetration test and IT health check, these are periodic tasks. We also encourage teams to run automated security testing tools so they can pick up security vulnerabilities much more quickly. We recommend that security testing tools are run on a regular basis, not just when code is pushed. This is because new vulnerabilities may emerge without you having made any changes to your application.
