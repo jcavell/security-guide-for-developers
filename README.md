@@ -17,8 +17,8 @@
   - [File uploads](#file-uploads)
   - [Communication security](#communication-security)
 - [Automated security testing](#automated-security-testing)
-  - [NodeJS dependency security testing](#nodejs-security-testing)
-  - [Scala dependency security testing](#scala-security-testing)
+  - [NodeJS dependency security testing - Snyk](#nodejs-security-testing)
+  - [Scala dependency security testing -  SBT Dependency Check](#scala-security-testing)
   - [Java dependency security testing](#java-security-testing)  
 - [Resources](#useful-resources-and-books)
 
@@ -31,10 +31,11 @@
 
 ## Development process
 - security should be part of the agile delivery process and be applied per story
+- use the [OWASP Security Testing Framework](https://www.owasp.org/index.php/The_OWASP_Testing_Framework) for a checklist
 - enforce [protected branches](https://github.com/blog/2051-protected-branches-and-required-status-checks)
 - enforce reviews via [pull requests](https://help.github.com/articles/using-pull-requests/)
 - require [signed commits](https://help.github.com/articles/signing-commits-using-gpg/)
-- have a well defined, understood and enforced code review process
+- have a well defined, understood and enforced peer review process
 - ensure you have fast, repeatable deploys with automated testing
 - monitor for security advisories and patches and update when necessary
 
@@ -56,7 +57,7 @@
 - be careful using &lt;script src&gt; unless you have complete control over the script that is loaded
 - if submitting a form modifies data or stage, use POST not GET
 - avoid [SQL injection](https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet) / javascript injection by ensuring all queries are [parameterised](https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet) (and / or use e.g. an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping), [Active Record](http://www.martinfowler.com/eaaCatalog/activeRecord.html))
-- protect against cross site scripting [(XSS)] (https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet) by escaping / sanitising untrusted data using a standard security encoding library. Also consider using [Content Security Policy] (https://w3c.github.io/webappsec-csp/2/) headers to whitelist assets a page can load
+- protect against cross site scripting [(XSS)](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet) by escaping / sanitising untrusted data using a standard security encoding library. Also consider using [Content Security Policy] (https://w3c.github.io/webappsec-csp/2/) headers to whitelist assets a page can load
 - protect against cross site request forgery [(CSRF)](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) which target state-changing requests. Check standard headers to verify the request is same origin AND check a CSRF token
 - ensure that resources you load are as expected by using [subresource integrity](https://www.w3.org/TR/SRI/)
 - use HTTP Strict Transport Security [(HSTS)](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet) with e.g. a "Strict-Transport-Security: max-age=8640000; includeSubDomains" HTTP Header to protected against SSL strip attacks. Consider entering your domain into the [HSTS preload list](https://hstspreload.appspot.com/)
@@ -87,7 +88,6 @@
 ## Running application
 
 - always use HTTPS (ensure you use [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) 1.2)
-- ensure SSL certificates cover the domain and sub-domains, are current and from a trusted Certificate Authority
 - web applications must use a properly configured Web Application Firewall [(WAF)](https://www.owasp.org/index.php/Web_Application_Firewall) e.g. [NAXSI](https://github.com/nbs-system/naxsi)
 - remove unnecessary functionality and code
 - if exceptions occur, fail securely
@@ -121,17 +121,20 @@
 
 ## Data protection
 
+- do not store passwords, connection strings etc. in plain text
 - understand the data that will be used, its retention and removal policy
 - understand who will be accessing the service / data, with what devices via what networks / 3rd party services
-- only store and use the minimum amount of data required to fulfil the user need
-- allow users to view only the data they need
+- only store and use the minimum amount of data required to fulfil the user need; allow users to view only the data they need
 - don't (provide interfaces that) allow arbitrary querying of data
 - don't allow download of bulk data-sets or too much data to be visible on a page
 - rate limit access to large data-sets and record access attempts (also limit the number of transactions a user or device can perform in a given time period)
 - enforce use of database schemas, even for noSQL databases by using e.g. [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB
 - avoid caching data within services unless necessary
 - protect caches / temp files containing sensitive data from unauthorised usage and purge them ASAP
-- use synchronous cryptography (shared secret) e.g. [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) to encrypt / decrypt your own data if its sensitive. Ensure the shared key is held securely and separately to the data
+- use synchronous cryptography (shared secret) e.g. [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) to encrypt / decrypt your own data if its sensitive.
+- Ensure a shared key is held securely and separately to the data, preferably in a separate key vault (e.g. [Vault](https://www.vaultproject.io/)) that your service can access when it needs a key
+- use a key management process e.g. leveraging [Amazon KMS](https://aws.amazon.com/kms/)
+- encrypt backups (you will need to know which keys are required to handle which version)
 - encode fields that have especially sensitive values
 - disable autocomplete on forms for sensitive fields
 - not transmit any sensitive information within the URL
@@ -139,7 +142,6 @@
 - anonymise data (ensuring re-identification cannot take place) sent to reporting tools or being used as test data
 - consider encrypting partially completed forms under a key held by the user if you do not need to use this data
 - applications should connect to databases with different credentials for each trust distinction e.g. user, read-only, admin, guest
-- do not store passwords, connection strings etc. in plain text
 
 ## Authentication / authorisation
 
@@ -191,7 +193,7 @@
 ## Communication security
 
 - implement transport encryption for the transmission of all sensitive information and supplement with encryption of the payload if necessary
-- TLS certificates should be valid and have the correct domain name, not be expired, and be installed with intermediate certificates when required
+- ensure TLS certificates cover the domain and sub-domains, are current and from a trusted Certificate Authority, and be installed with intermediate certificates when required
 - specify character encodings for all connections
 - do not allow the mix of TLS and non-TLS content
 - filter parameters containing sensitive info in the HTTP referer header when linking to external sites
@@ -211,6 +213,7 @@
 - consider 2-way TLS [client certs](https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet#Client-Side_Certificates) if your application is integrating via a web service. However, implementation and trouble-shooting can be onerous and revoking and reissuing certificates a complexity
 - consider a hash-based messaging code (HMAC) over HTTP (using e.g. JWTs) to sign requests to indicate their authenticity; this does require a shared secret
 - whitelist allowable methods
+- be aware of authorisation needs in service-to-service communication, and avoid the confused deputy problem where a service calls another without providing the appropriate authorisation information. Using [external ids](https://aws.amazon.com/blogs/security/how-to-use-external-id-when-granting-access-to-your-aws-resources/) can help here. 
 - interface specification should be auto-generated only after tests against the specification pass
 
 # Automated security testing
