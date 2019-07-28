@@ -173,7 +173,7 @@
 - logout should always be available
 - expire session ids after a defined period (to reduce impact of session hijacking)
 - session invalidation (due to e.g. timeout, logout, expiration or unauthorised reuse) should immediately delete the session id + session data on the server and client (include a Set-Cookie directive in the response with an expiration time in the past)
-- always create a new session when re-authenticating, to avoid [session fixation](https://www.owasp.org/index.php/Session_fixation) attacks
+- always create a new session (therefore new session id in a cookie) when re-authenticating, to avoid [session fixation](https://www.owasp.org/index.php/Session_fixation) attacks; never store the session id in the URL
 - sensitive session data should be stored on the server
 - clear out expired server-side session data frequently
 - do not allow concurrent logins for the same user id
